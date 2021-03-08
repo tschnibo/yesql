@@ -19,5 +19,5 @@ end
 # Config custom drivers in your projects config! Pattern:
 #
  config :yesql,
-  custom_yesql_drivers: [#Mssqlex,
+  custom_yesql_drivers: [Mssqlex,
                         ]

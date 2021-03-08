@@ -14,7 +14,9 @@ defmodule CustomDrivers do
   defmacro __using__(_opts) do
 
     case Application.fetch_env(:yesql, :custom_yesql_drivers) do
-      :error -> :ok
+      :error -> Module.put_attribute(Yesql, :supported_drivers, Postgrex)
+                Module.put_attribute(Yesql, :supported_drivers, Mssqlex)
+
       {:ok, driver_list} -> IO.inspect driver_list
                             for driver <- driver_list do
                               IO.puts "Adding driver to supported driver: #{driver}"
@@ -22,8 +24,7 @@ defmodule CustomDrivers do
                             end
     end
 
-    Module.put_attribute(Yesql, :supported_drivers, Postgrex)
-    Module.put_attribute(Yesql, :supported_drivers, Ecto)
+
   end
 
 end

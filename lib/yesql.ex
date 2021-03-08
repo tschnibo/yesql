@@ -36,7 +36,6 @@ defmodule Yesql do
 
   defmacro defquery(file_path, opts \\ []) do
     drivers = @supported_drivers
-    #IO.inspect drivers
 
     quote bind_quoted: binding() do
       name = file_path |> Path.basename(".sql") |> String.to_atom()
@@ -108,6 +107,7 @@ defmodule Yesql do
   for driver <- @supported_drivers do
     case Code.ensure_compiled(driver) do
       {:module, modulename} ->
+        IO.inspect modulename
         case modulename do
           Postgrex ->   defp exec_for_driver(conn, Postgrex, sql, param_list) do
                           Postgrex.query(conn, sql, param_list)
@@ -116,13 +116,14 @@ defmodule Yesql do
                       Ecto.Adapters.SQL.query(repo, sql, param_list)
                     end
           custom_driver ->
-            if Kernel.function_exported?(custom_driver.query, :keys, 4) do
+            if Kernel.function_exported?(custom_driver , :query ,4) do
               defp exec_for_driver(repo, custom_driver, sql, param_list) do
                 custom_driver.query(repo, sql, param_list)
               end
             end
         end
-      _ -> raise UnknownDriver.exception(driver)
+      error ->  IO.inspect error
+
     end
   end
 
