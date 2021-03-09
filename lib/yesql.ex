@@ -1,5 +1,6 @@
 defmodule Yesql do
   use CustomDrivers
+
   @moduledoc """
 
       defmodule Query do
@@ -41,7 +42,9 @@ defmodule Yesql do
       name = file_path |> Path.basename(".sql") |> String.to_atom()
       driver = opts[:driver] || @yesql_private__driver || raise(NoDriver, name)
       conn = opts[:conn] || @yesql_private__conn
-      {:ok, sql, param_spec} = file_path |> File.read!() |> String.replace("\r\n", "\n") |> Yesql.parse()
+
+      {:ok, sql, param_spec} =
+        file_path |> File.read!() |> String.replace("\r\n", "\n") |> Yesql.parse()
 
       unless driver in drivers, do: raise(UnknownDriver, driver)
 
@@ -107,23 +110,29 @@ defmodule Yesql do
   for driver <- @supported_drivers do
     case Code.ensure_compiled(driver) do
       {:module, modulename} ->
-        IO.inspect modulename
+        IO.inspect(modulename)
+
         case modulename do
-          Postgrex ->   defp exec_for_driver(conn, Postgrex, sql, param_list) do
-                          Postgrex.query(conn, sql, param_list)
-                        end
-          Ecto ->   defp exec_for_driver(repo, Ecto, sql, param_list) do
-                      Ecto.Adapters.SQL.query(repo, sql, param_list)
-                    end
+          Postgrex ->
+            defp exec_for_driver(conn, Postgrex, sql, param_list) do
+              Postgrex.query(conn, sql, param_list)
+            end
+
+          Ecto ->
+            defp exec_for_driver(repo, Ecto, sql, param_list) do
+              Ecto.Adapters.SQL.query(repo, sql, param_list)
+            end
+
           custom_driver ->
-            if Kernel.function_exported?(custom_driver , :query ,3) do
+            if Kernel.function_exported?(custom_driver, :query, 3) do
               defp exec_for_driver(repo, custom_driver, sql, param_list) do
                 custom_driver.query(repo, sql, param_list)
               end
             end
         end
-      error ->  IO.inspect error
 
+      error ->
+        IO.inspect(error)
     end
   end
 
