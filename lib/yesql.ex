@@ -116,7 +116,7 @@ defmodule Yesql do
                       Ecto.Adapters.SQL.query(repo, sql, param_list)
                     end
           custom_driver ->
-            if Kernel.function_exported?(custom_driver , :query ,4) do
+            if Kernel.function_exported?(custom_driver , :query ,3) do
               defp exec_for_driver(repo, custom_driver, sql, param_list) do
                 custom_driver.query(repo, sql, param_list)
               end
