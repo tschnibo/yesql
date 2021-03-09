@@ -1,7 +1,8 @@
 defmodule CustomDrivers do
   @moduledoc """
-    Specify standard drivers Postgrex and Ecto but
-    load further driver modules according to config.
+    Load standard drivers Postgrex and Ecto or
+    alternatively load driver modules according to config
+    (all drivers need to be specified).
     In config, specify :yesql :supported_drivers as list:
     e.g.:
 
